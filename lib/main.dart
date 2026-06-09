@@ -1,74 +1,109 @@
 import 'package:flutter/material.dart';
-import 'widgets/pagina1.dart';
-import 'widgets/pagina2.dart';
-import 'widgets/pagina3.dart';
-import 'widgets/pagina4.dart';
-import 'widgets/pagina5.dart';
+import 'package:myapp/insesion.dart';
+import 'package:myapp/story_service.dart';
+import 'package:myapp/registro.dart';
+import 'package:myapp/widgets/pagina1.dart';
+import 'package:myapp/widgets/pagina2.dart';
+import 'package:myapp/widgets/pagina3.dart';
+import 'package:myapp/widgets/pagina4.dart';
+import 'package:myapp/widgets/pagina5.dart';
+import 'package:myapp/widgets/perfil_page.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(const LecturasRoldanApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => StoryService()..initializeWithSampleData(),
+      child: const MiApp(),
+    ),
+  );
+}
 
-class LecturasRoldanApp extends StatelessWidget {
-  const LecturasRoldanApp({super.key});
+class MiApp extends StatelessWidget {
+  const MiApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
-      home: const MainNavigation(),
+      title: 'Wattpad Clon',
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: Colors.black,
+        scaffoldBackgroundColor: const Color(0xFF121212),
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/home': (context) => const Inicio(),
+        '/profile': (context) => const PerfilPage(),
+      },
     );
   }
 }
 
-class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
+class Inicio extends StatefulWidget {
+  const Inicio({super.key});
 
   @override
-  State<MainNavigation> createState() => _MainNavigationState();
+  State<Inicio> createState() => _InicioState();
 }
 
-class _MainNavigationState extends State<MainNavigation> {
+class _InicioState extends State<Inicio> {
   int _currentIndex = 0;
 
-  // El orden de las páginas debe coincidir con los iconos del BottomNav
   final List<Widget> _paginas = [
-    const Pagina1(), // Inicio (Icono Home)
-    const Pagina5(), // Buscador (Icono Lupa)
-    const Pagina2(), // Biblioteca (Icono Libros)
-    const Pagina3(), // Escribir (Icono Lápiz)
-    const Pagina4(), // Notificaciones (Icono Campana)
+    const Pagina1(),
+    const Pagina5(),
+    const Pagina2(),
+    const Pagina3(),
+    const Pagina4(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _paginas),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _paginas,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.black,
-        selectedItemColor: const Color.fromARGB(255, 255, 155, 225),
-        unselectedItemColor: Colors.grey[600],
         currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
+        onTap: (int index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        selectedItemColor: const Color.fromARGB(255, 245, 147, 204),
+        unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: ''),
           BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book, size: 26),
-            label: '',
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Inicio',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.edit_note, size: 30),
-            label: '',
+            icon: Icon(Icons.search),
+            label: 'Buscar',
           ),
           BottomNavigationBarItem(
-            icon: Badge(
-              label: Text('4'),
-              child: Icon(Icons.notifications_none),
-            ),
-            label: '',
+            icon: Icon(Icons.library_books_outlined),
+            activeIcon: Icon(Icons.library_books),
+            label: 'Biblioteca',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.edit_outlined),
+            activeIcon: Icon(Icons.edit),
+            label: 'Escribir',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_none_outlined),
+            activeIcon: Icon(Icons.notifications),
+            label: 'Notificaciones',
           ),
         ],
       ),

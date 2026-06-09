@@ -546,4 +546,4 @@ class _PantallaChatIndividualState extends State<PantallaChatIndividual> {
       ),
     );
   }
-}
+} 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 // --- MODELOS DE DATOS ---
 class Capitulo {
   String id;
@@ -7,6 +8,7 @@ class Capitulo {
   String contenido;
   bool esBorrador;
   DateTime fechaModificacion;
+
 
   Capitulo({
     required this.id,
@@ -17,6 +19,7 @@ class Capitulo {
   });
 }
 
+
 class Historia {
   String id;
   String titulo;
@@ -24,6 +27,7 @@ class Historia {
   String sinopsis;
   List<String> etiquetas;
   List<Capitulo> capitulos;
+
 
   Historia({
     required this.id,
@@ -34,23 +38,27 @@ class Historia {
     required this.capitulos,
   });
 
+
   int get totalPublicados => capitulos.where((c) => !c.esBorrador).length;
   int get totalBorradores => capitulos.where((c) => c.esBorrador).length;
 }
+
 
 // --- PÁGINA PRINCIPAL ---
 class Pagina3 extends StatefulWidget {
   const Pagina3({super.key});
 
+
   @override
   State<Pagina3> createState() => _Pagina3State();
 }
+
 
 class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   String _filtroBusqueda = '';
-  
+ 
   final List<Historia> _misHistorias = [
     Historia(
       id: '1',
@@ -67,6 +75,7 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
     ),
   ];
 
+
   @override
   void initState() {
     super.initState();
@@ -78,12 +87,14 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
     });
   }
 
+
   @override
   void dispose() {
     _tabController.dispose();
     _searchController.dispose();
     super.dispose();
   }
+
 
   void _mostrarRecuadroAyuda(String titulo, String descripcion, List<String> consejos) {
     showModalBottomSheet(
@@ -154,11 +165,13 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
     );
   }
 
+
   void _pantallaCrearHistoria() {
     final tituloController = TextEditingController();
     final portadaController = TextEditingController();
     final sinopsisController = TextEditingController();
     final etiquetasController = TextEditingController();
+
 
     showModalBottomSheet(
       context: context,
@@ -251,12 +264,13 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
                         if (urlFinal.isEmpty) {
                           urlFinal = 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=200';
                         }
-                        
+                       
                         List<String> listaEtiquetas = etiquetasController.text
                             .split(',')
                             .map((e) => e.trim().toLowerCase())
                             .where((e) => e.isNotEmpty)
                             .toList();
+
 
                         setState(() {
                           _misHistorias.add(Historia(
@@ -283,6 +297,7 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
     );
   }
 
+
   void _pantallaDetalleHistoria(Historia historia) {
     Navigator.push(
       context,
@@ -299,6 +314,7 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -331,12 +347,14 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
     );
   }
 
+
   Widget _buildMisHistoriasTab() {
     final historiasFiltradas = _misHistorias.where((historia) {
       final coincideTitulo = historia.titulo.toLowerCase().contains(_filtroBusqueda);
       final coincideEtiqueta = historia.etiquetas.any((tag) => tag.contains(_filtroBusqueda));
       return coincideTitulo || coincideEtiqueta;
     }).toList();
+
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -361,12 +379,13 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
           ),
         ),
 
+
         if (historiasFiltradas.isEmpty)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 60),
             child: Center(child: Text('No se encontraron obras coincidentes.', style: TextStyle(color: Colors.grey))),
           ),
-        
+       
         ...historiasFiltradas.map((historia) => Padding(
           padding: const EdgeInsets.only(bottom: 14.0),
           child: InkWell(
@@ -386,9 +405,9 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
-                        historia.portadaUrl, 
-                        width: 75, 
-                        height: 105, 
+                        historia.portadaUrl,
+                        width: 75,
+                        height: 105,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Container(
                           width: 75, height: 105, color: Colors.white12,
@@ -411,7 +430,7 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
                         ),
                         const SizedBox(height: 4),
                         Text(historia.titulo, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                        
+                       
                         if (historia.etiquetas.isNotEmpty) ...[
                           const SizedBox(height: 6),
                           Text(
@@ -421,6 +440,7 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
+
 
                         const SizedBox(height: 8),
                         Row(
@@ -489,11 +509,13 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
     );
   }
 
+
   Widget _buildAnaliticasTab() {
     int totalLibros = _misHistorias.length;
     int totalPub = _misHistorias.fold(0, (sum, h) => sum + h.totalPublicados);
     int totalBorr = _misHistorias.fold(0, (sum, h) => sum + h.totalBorradores);
     int totalCapitulos = totalPub + totalBorr;
+
 
     return ListView(
       padding: const EdgeInsets.all(20),
@@ -512,13 +534,14 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
         const SizedBox(height: 30),
         const Text('Progreso de Production', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 15),
-        
+       
         _buildProgressBar('Tasa de Publicación', totalCapitulos == 0 ? 0 : totalPub / totalCapitulos, Colors.greenAccent),
         const SizedBox(height: 12),
         _buildProgressBar('Capítulos en Reserva (Borradores)', totalCapitulos == 0 ? 0 : totalBorr / totalCapitulos, Colors.orangeAccent),
       ],
     );
   }
+
 
   Widget _buildProgressBar(String titulo, double porcentaje, Color color) {
     return Container(
@@ -549,6 +572,7 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
     );
   }
 
+
   Widget _buildMetricCard(String title, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -570,6 +594,7 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
     );
   }
 
+
   Widget _buildLearningCard(String title, String subtitle, IconData icon, Color color, VoidCallback accion) {
     return Card(
       color: const Color(0xFF1A1A1A),
@@ -588,30 +613,36 @@ class _Pagina3State extends State<Pagina3> with SingleTickerProviderStateMixin {
   }
 }
 
+
 // --- SUB-PÁGINA DINÁMICA ---
 class PaginaDetalleHistoriaInteractive extends StatefulWidget {
   final Historia historia;
   final VoidCallback onEstadoCambiado;
   final VoidCallback onBorrarHistoria;
 
+
   const PaginaDetalleHistoriaInteractive({
-    super.key, 
-    required this.historia, 
+    super.key,
+    required this.historia,
     required this.onEstadoCambiado,
     required this.onBorrarHistoria,
   });
+
 
   @override
   State<PaginaDetalleHistoriaInteractive> createState() => _PaginaDetalleHistoriaInteractiveState();
 }
 
+
 class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoriaInteractive> {
   bool _mostrarSoloBorradores = false;
+
 
   void _editarDatosHistoria() {
     final tituloController = TextEditingController(text: widget.historia.titulo);
     final sinopsisController = TextEditingController(text: widget.historia.sinopsis);
     final etiquetasController = TextEditingController(text: widget.historia.etiquetas.join(', '));
+
 
     showModalBottomSheet(
       context: context,
@@ -681,12 +712,13 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
                             .where((e) => e.isNotEmpty)
                             .toList();
 
+
                         setState(() {
                           widget.historia.titulo = tituloController.text.trim();
                           widget.historia.sinopsis = sinopsisController.text.trim().isEmpty ? 'Sin sinopsis disponible.' : sinopsisController.text.trim();
                           widget.historia.etiquetas = nuevaListaEtiquetas;
                         });
-                        
+                       
                         widget.onEstadoCambiado();
                         Navigator.pop(context);
                       }
@@ -702,6 +734,7 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
       },
     );
   }
+
 
   void _editarPortadaUrl() {
     final urlController = TextEditingController(text: widget.historia.portadaUrl);
@@ -738,6 +771,7 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
     );
   }
 
+
   void _confirmarBorrarHistoria() {
     showDialog(
       context: context,
@@ -764,9 +798,11 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
     );
   }
 
+
   void _pantallaEscribirEditarCapitulo(Capitulo capitulo, {bool esNuevo = false}) {
     final tituloCapController = TextEditingController(text: esNuevo ? '' : capitulo.titulo);
     final contenidoController = TextEditingController(text: capitulo.contenido);
+
 
     Navigator.push(
       context,
@@ -860,6 +896,7 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
     );
   }
 
+
   Future<bool?> _dialogoConfirmarCapitulo(Capitulo capitulo) async {
     return await showDialog<bool>(
       context: context,
@@ -875,9 +912,11 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     final listaFiltrada = widget.historia.capitulos.where((c) => !_mostrarSoloBorradores || c.esBorrador).toList();
+
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
@@ -911,9 +950,9 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.network(
-                        widget.historia.portadaUrl, 
-                        width: 85, 
-                        height: 125, 
+                        widget.historia.portadaUrl,
+                        width: 85,
+                        height: 125,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Container(
                           width: 85, height: 125, color: Colors.white12,
@@ -945,7 +984,7 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
                     const SizedBox(height: 4),
                     Text('${widget.historia.totalBorradores} Borradores activos', style: const TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 14)),
                     const SizedBox(height: 12),
-                    
+                   
                     if (widget.historia.etiquetas.isEmpty)
                       const Text('Sin etiquetas', style: TextStyle(color: Colors.white24, fontSize: 12))
                     else
@@ -968,7 +1007,7 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
             ],
           ),
           const SizedBox(height: 16),
-          
+         
           const Text('Sinopsis', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold, fontSize: 14)),
           const SizedBox(height: 6),
           Container(
@@ -984,9 +1023,9 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
               style: const TextStyle(color: Colors.grey, fontSize: 13, height: 1.4),
             ),
           ),
-          
+         
           const SizedBox(height: 25),
-          
+         
           Row(
             children: [
               ChoiceChip(
@@ -1009,12 +1048,13 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
             ],
           ),
           const SizedBox(height: 15),
-          
+         
           if (listaFiltrada.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 40),
               child: Center(child: Text('No se encontraron capítulos en esta categoría.', style: TextStyle(color: Colors.grey))),
             ),
+
 
           ...listaFiltrada.map((capitulo) => Dismissible(
             key: Key(capitulo.id),
@@ -1098,12 +1138,15 @@ class _PaginaDetalleHistoriaInteractiveState extends State<PaginaDetalleHistoria
   }
 }
 
+
 class _Badge extends StatelessWidget {
   final String text;
   final Color color;
   final Color textColor;
 
+
   const _Badge({required this.text, required this.color, required this.textColor});
+
 
   @override
   Widget build(BuildContext context) {

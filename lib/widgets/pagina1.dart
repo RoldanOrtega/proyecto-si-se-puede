@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/models/story.dart';
+import 'package:myapp/story_service.dart';
+import 'package:myapp/widgets/perfil_page.dart';
+import 'package:myapp/widgets/pagina7.dart';
+import 'package:provider/provider.dart';
 
 class Pagina1 extends StatelessWidget {
   const Pagina1({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<String> misImagenesAbajo = const [
-      'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/lobro4.JPG',
-      'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/orgullo.JPG',
-      'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/rey.JPG',
-      'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/sk.JPG',
-      'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/coraline3.0.JPG',
-      'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/cumbres.JPG',
-    ];
+    final storyService = Provider.of<StoryService>(context);
+    final allStories = storyService.publishedStories;
+
+    final writerStories = allStories.take(5).toList();
+    final classicStories = allStories.skip(5).toList();
 
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
@@ -44,110 +47,154 @@ class Pagina1 extends StatelessWidget {
             ),
             onPressed: null,
           ),
-          const Padding(
-            padding: EdgeInsets.only(right: 15),
-            child: CircleAvatar(
-              radius: 16,
-              backgroundImage: NetworkImage('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/PERFIL.JPG'),
+          Padding(
+            padding: const EdgeInsets.only(right: 15),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PerfilPage()),
+                );
+              },
+              child: const CircleAvatar(
+                radius: 16,
+                backgroundImage: NetworkImage('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/PERFIL.JPG'),
+              ),
             ),
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Image.network(
-              'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/coraline2.0.JPG',
-              height: 140,
-              fit: BoxFit.cover,
+      body: allStories.isEmpty
+          ? const Center(
+              child: Text(
+                'No hay historias publicadas aún.',
+                style: TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+            )
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Pagina7(story: allStories.first)),
+                    );
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      allStories.first.imageUrl,
+                      height: 140,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "Historias que te podrían gustar",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                if (writerStories.isNotEmpty) _buildDisenoMosaico(context, writerStories),
+                const SizedBox(height: 25),
+                const Text(
+                  "Éxitos Recientes",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                if (classicStories.isNotEmpty)
+                  SizedBox(
+                    height: 140,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: classicStories.length,
+                      itemBuilder: (context, index) =>
+                          _buildSquareBook(context, classicStories[index]),
+                    ),
+                  ),
+              ],
             ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            "Historias de los escritores que te gustan",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Comic Sans MS',
-            ),
-          ),
-          const SizedBox(height: 10),
-          _buildDisenoMosaico(),
-          const SizedBox(height: 25),
-          const Text(
-            "Éxitos Clasicos",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Comic Sans MS',
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 140,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: misImagenesAbajo.length,
-              itemBuilder: (context, index) =>
-                  _buildSquareBook(misImagenesAbajo[index]),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
-  Widget _buildDisenoMosaico() {
+  Widget _buildDisenoMosaico(BuildContext context, List<Story> stories) {
     return SizedBox(
       height: 210,
       child: Row(
         children: [
-          Expanded(child: _capa('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/cumbres.JPG')),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(child: _capa('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/l.JPG')),
-                      const SizedBox(width: 8),
-                      Expanded(child: _capa('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/libro2.JPG')),
-                    ],
+          if (stories.isNotEmpty) Expanded(child: _capa(context, stories[0])),
+          if (stories.length > 1)
+            const SizedBox(width: 10),
+          if (stories.length > 1)
+            Expanded(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        if (stories.length > 1) Expanded(child: _capa(context, stories[1])),
+                        if (stories.length > 2) const SizedBox(width: 8),
+                        if (stories.length > 2) Expanded(child: _capa(context, stories[2])),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(child: _capa('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/libro3.JPG')),
-                      const SizedBox(width: 8),
-                      Expanded(child: _capa('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/ll.JPG')),
-                    ],
+                   if (stories.length > 3) const SizedBox(height: 10),
+                  if (stories.length > 3)
+                  Expanded(
+                    child: Row(
+                      children: [
+                        if (stories.length > 3) Expanded(child: _capa(context, stories[3])),
+                        if (stories.length > 4) const SizedBox(width: 8),
+                        if (stories.length > 4) Expanded(child: _capa(context, stories[4])),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _capa(String url) => Container(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
-      image: DecorationImage(image: NetworkImage(url), fit: BoxFit.cover),
+  Widget _capa(BuildContext context, Story story) => GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Pagina7(story: story)),
+      );
+    },
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        image: DecorationImage(image: NetworkImage(story.imageUrl), fit: BoxFit.cover),
+      ),
     ),
   );
-  Widget _buildSquareBook(String url) => Container(
-    width: 95,
-    margin: const EdgeInsets.only(right: 12),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
-      image: DecorationImage(image: NetworkImage(url), fit: BoxFit.cover),
+
+  Widget _buildSquareBook(BuildContext context, Story story) => GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Pagina7(story: story)),
+      );
+    },
+    child: Container(
+      width: 95,
+      margin: const EdgeInsets.only(right: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        image: DecorationImage(image: NetworkImage(story.imageUrl), fit: BoxFit.cover),
+      ),
     ),
   );
 }

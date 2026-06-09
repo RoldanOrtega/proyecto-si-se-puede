@@ -1,104 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:myapp/story_service.dart';
+import 'package:myapp/models/story.dart';
+import 'package:myapp/models/chapter.dart';
 
 class Pagina7 extends StatelessWidget {
-  const Pagina7({super.key});
+  final Story story;
+
+  const Pagina7({super.key, required this.story});
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
+    final storyService = Provider.of<StoryService>(context, listen: false);
+    final publicChapters = storyService.getPublicChapters(story);
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
         backgroundColor: Colors.black,
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          automaticallyImplyLeading: false,
-          title: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: Colors.grey[900],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.search, color: Colors.grey, size: 18),
-                const SizedBox(width: 10),
-                const Expanded(
-                  child: Text(
-                    'Azazel_lector',
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white, size: 18),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
+        elevation: 0,
+        title: Text(story.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          _buildStoryHeader(),
+          const SizedBox(height: 24),
+          _buildSynopsisCard(),
+          const SizedBox(height: 24),
+          _buildChapterList(publicChapters),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStoryHeader() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.network(
+            story.imageUrl,
+            width: 100,
+            height: 140,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => 
+              const Icon(Icons.book, size: 100, color: Colors.grey),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'Cancelar',
-                style: TextStyle(color: Colors.white),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                story.title,
+                style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
               ),
-            ),
-          ],
-          bottom: const TabBar(
-            isScrollable: true,
-            indicatorColor: Colors.orange,
-            indicatorWeight: 3,
-            labelStyle: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-            tabs: [
-              Tab(text: 'HISTORIAS'),
-              Tab(text: 'PERFILES'),
-              Tab(text: 'LISTAS DE LECTURA'),
-              Tab(text: 'ETIQUETAS'),
+              const SizedBox(height: 8),
+              Text(
+                'de ${story.authorId}', // En el futuro, podriamos buscar el nombre del autor con este id
+                style: const TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+              const SizedBox(height: 12),
+              // Podriamos añadir estadisticas aqui (lecturas, votos, etc.)
             ],
           ),
         ),
-        body: Column(
-          children: [
-            // Fila de Filtros (Extensión, Actualizado)
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                children: [
-                  _botonFiltro(Icons.tune),
-                  const SizedBox(width: 8),
-                  _botonFiltroTexto('Extensión'),
-                  const SizedBox(width: 8),
-                  _botonFiltroTexto('Actualizadas por última vez'),
-                ],
-              ),
-            ),
+      ],
+    );
+  }
 
-            // Lista de Historias
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                children: [
-                  _cardHistoria(
-                    '☆ Spider-Gotham ☆',
-                    'En curso',
-                    '19.2 K',
-                    '2.61 K',
-                    '12',
-                    'Después de casi destruir su universo, Peter Parker/Spider-man es enviado a Gotham...',
-                    'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/spider.JPG',
-                  ),
-                  const SizedBox(height: 15),
-                  _cardHistoria(
-                    'The Amazing Oregairu',
-                    'Completa',
-                    '9.21 K',
-                    '873',
-                    '42',
-                    'Tras la muerte de Gwen Stacy en su batalla contra el Duende Verde, Peter Parker consigue una beca...',
-                    'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/libro2.JPG',
-                  ),
-                ],
-              ),
+  Widget _buildSynopsisCard() {
+    return Card(
+      color: Colors.grey[900],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Sinopsis',
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              story.synopsis,
+              style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
             ),
           ],
         ),
@@ -106,125 +96,50 @@ class Pagina7 extends StatelessWidget {
     );
   }
 
-  Widget _botonFiltro(IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Icon(icon, color: Colors.white, size: 18),
-    );
-  }
-
-  Widget _botonFiltroTexto(String texto) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          Text(
-            texto,
-            style: const TextStyle(color: Colors.white, fontSize: 12),
+  Widget _buildChapterList(List<Chapter> chapters) {
+    if (chapters.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Text(
+            'El autor aún no ha publicado ningún capítulo.',
+            style: TextStyle(color: Colors.grey, fontSize: 16),
+            textAlign: TextAlign.center,
           ),
-          const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 16),
-        ],
-      ),
-    );
-  }
+        ),
+      );
+    }
 
-  Widget _cardHistoria(
-    String titulo,
-    String estado,
-    String lecturas,
-    String votos,
-    String partes,
-    String desc,
-    String url,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: Image.network(url, width: 80, height: 110, fit: BoxFit.cover),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  titulo,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(
-                      255,
-                      241,
-                      85,
-                      163,
-                    ).withValues(alpha: .5),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    estado,
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 241, 33, 179),
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    _statIcon(Icons.remove_red_eye, lecturas),
-                    const SizedBox(width: 10),
-                    _statIcon(Icons.star, votos),
-                    const SizedBox(width: 10),
-                    _statIcon(Icons.list, partes),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  desc,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _statIcon(IconData icon, String valor) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 14, color: Colors.grey),
-        const SizedBox(width: 4),
-        Text(valor, style: const TextStyle(color: Colors.grey, fontSize: 11)),
+        const Text(
+          'Capítulos',
+          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: chapters.length,
+          itemBuilder: (context, index) {
+            final chapter = chapters[index];
+            return Card(
+              color: Colors.grey[900],
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                leading: const Icon(Icons.menu_book, color: Colors.orange),
+                title: Text(chapter.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+                // Al tocar, en un futuro, navegariamos a la pantalla de lectura del capitulo
+                onTap: () {
+                   ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Leyendo: ${chapter.title}')),
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ],
     );
   }

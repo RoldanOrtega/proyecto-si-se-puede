@@ -1,5 +1,27 @@
 import 'package:flutter/material.dart';
-import 'pagina6.dart';
+import 'package:myapp/widgets/pagina6.dart'; // Importamos la página 6 para la navegación
+
+// --- ¡LISTA DEFINITIVA Y COMPLETA DE HISTORIAS! ---
+// He recopilado todos los libros de tus otros archivos, como me pediste.
+final List<Map<String, String>> _stories = [
+  {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/lobro4.JPG', 'title': 'Historia Archivada'},
+  {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/orgullo.JPG', 'title': 'Orgullo y Prejuicio'},
+  {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/rey.JPG', 'title': 'El Rey León'},
+  {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/sk.JPG', 'title': 'It (Eso)'},
+  {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/coraline3.0.JPG', 'title': 'Coraline'},
+  {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/cumbres.JPG', 'title': 'Cumbres Borrascosas'},
+  {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/l.JPG', 'title': 'No Es Como Si Me Gustaras'},
+  {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/libro2.JPG', 'title': 'Spider-Gotham'},
+  {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/libro3.JPG', 'title': 'Un Beso de Invierno'},
+  {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/ll.JPG', 'title': 'El Arte de Engañar al Karma'},
+];
+
+// --- DATOS PARA LA LISTA VERTICAL ---
+final List<Map<String, String>> _popularStories = [
+    {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/libro2.JPG', 'title': 'Spider-Gotham', 'author': 'Azazel_lector'},
+    {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/l.JPG', 'title': 'No Es Como Si Me Gustaras', 'author': 'aazzaaazzssj'},
+    {'imageUrl': 'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/main/libro3.JPG', 'title': 'Un Beso de Invierno', 'author': 'Darlis Stefany'},
+];
 
 class Pagina5 extends StatelessWidget {
   const Pagina5({super.key});
@@ -7,300 +29,183 @@ class Pagina5 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 1. Buscador
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Pagina6()),
-                ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[900],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.search, color: Colors.grey),
-                      SizedBox(width: 10),
-                      Text(
-                        'Buscar historias o personas',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+      backgroundColor: const Color(0xFF121212),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF121212),
+        title: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Pagina6()),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey[900],
+              borderRadius: BorderRadius.circular(8),
             ),
-
-            // 2. Categorías
-            _buildCategorias(),
-
-            // 3. Contenido Principal
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  // --- SECCIÓN ORIGINALS ---
-                  const Text(
-                    'Wattpad Originals más populares',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-
-                  // Fila de libros con scroll horizontal (Más recuadros)
-                  SizedBox(
-                    height: 180,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        _cardOriginal('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/l.JPG'),
-                        _cardOriginal('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/libro2.JPG'),
-                        _cardOriginal('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/libro3.JPG'),
-                        _cardOriginal('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/ll.JPG'),
-                        _cardOriginal(
-                          'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/l.JPG',
-                        ), // Repetido para llenar
-                        _cardOriginal('https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/libro2.JPG'),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 30),
-
-                  // --- SECCIÓN RANKING (1.29 K Historias) ---
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        '1.29 K Historias',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                      _botonFiltro(),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-
-                  _itemRanking(
-                    '1',
-                    'LUJURIA',
-                    'EvaMuozBenitez',
-                    '225 M',
-                    '107',
-                    ['18', '21', 'engaños'],
-                    'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/l.JPG',
-                  ),
-                  _itemRanking(
-                    '2',
-                    'Deseo [+21]',
-                    'karla_cipriano17',
-                    '43.6 M',
-                    '97',
-                    ['18', 'deseo', 'erotico'],
-                    'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/libro2.JPG',
-                  ),
-                  _itemRanking(
-                    '3',
-                    'Antes de diciembre',
-                    'JoanaMarcus',
-                    '179 M',
-                    '55',
-                    ['romance', 'juvenil'],
-                    'https://raw.githubusercontent.com/RoldanOrtega/Imagenes-Act9/refs/heads/main/libro3.JPG',
-                  ),
-                ],
-              ),
+            child: const Row(
+              children: [
+                Icon(Icons.search, color: Colors.grey, size: 20),
+                SizedBox(width: 10),
+                Text(
+                  'Buscar en Wattpad',
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+              ],
             ),
-          ],
+          ),
+        ),
+      ),
+      body: ListView(
+        children: [
+          _buildSectionTitle('Historias que te podrían gustar'),
+          _buildHorizontalStoryList(),
+          _buildSectionTitle('Búsquedas populares'),
+          _buildPopularSearches(),
+          const SizedBox(height: 20),
+          _buildVerticalStoryList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
 
-  Widget _buildCategorias() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: ['Romance', 'Fanfic', 'Novela Juvenil', 'Fantasía']
-            .map(
-              (cat) => Padding(
-                padding: const EdgeInsets.only(right: 20, bottom: 10),
-                child: Text(
-                  cat,
-                  style: TextStyle(
-                    color: cat == 'Romance' ? Colors.white : Colors.grey,
-                    fontWeight: cat == 'Romance'
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                  ),
-                ),
-              ),
-            )
-            .toList(),
+  Widget _buildHorizontalStoryList() {
+    return SizedBox(
+      height: 220,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: _stories.length,
+        itemBuilder: (context, index) {
+          final story = _stories[index];
+          return _buildStoryCard(story['imageUrl']!, story['title']!);
+        },
       ),
     );
   }
 
-  // Widget para las portadas con el logo "W"
-  Widget _cardOriginal(String url) {
+  Widget _buildStoryCard(String imageUrl, String title) {
     return Container(
-      width: 115,
-      margin: const EdgeInsets.only(right: 12),
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.network(url, fit: BoxFit.cover, height: 170, width: 115),
-          ),
-          // El pequeño logo naranja de la esquina (W)
-          Positioned(
-            top: 5,
-            left: 5,
-            child: Container(
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 255, 154, 233),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                'W',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _botonFiltro() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white10,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white24),
-      ),
-      child: const Row(
-        children: [
-          Icon(Icons.tune, size: 16, color: Colors.white),
-          SizedBox(width: 5),
-          Text('Filtro', style: TextStyle(fontSize: 12, color: Colors.white)),
-        ],
-      ),
-    );
-  }
-
-  Widget _itemRanking(
-    String n,
-    String t,
-    String a,
-    String v,
-    String c,
-    List<String> tags,
-    String url,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Row(
+      width: 140,
+      margin: const EdgeInsets.only(right: 16),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: Image.network(url, width: 75, height: 110, fit: BoxFit.cover),
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(imageUrl, height: 180, width: 140, fit: BoxFit.cover),
           ),
-          const SizedBox(width: 15),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPopularSearches() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 12,
+        children: [
+          _buildSearchChip('#romance'),
+          _buildSearchChip('#vampiros'),
+          _buildSearchChip('#fanfic'),
+          _buildSearchChip('#misterio'),
+          _buildSearchChip('#badboy'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchChip(String label) {
+    return Chip(
+      label: Text(label, style: const TextStyle(color: Colors.white)),
+      backgroundColor: Colors.grey[800],
+    );
+  }
+
+  Widget _buildVerticalStoryList() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        children: _popularStories.map((story) {
+          return _buildVerticalStoryItem(story['imageUrl']!, story['title']!, story['author']!);
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildVerticalStoryItem(String imageUrl, String title, String author) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(imageUrl, width: 70, height: 100, fit: BoxFit.cover),
+          ),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$n $t',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: Colors.white,
-                  ),
+                  title,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                 ),
+                const SizedBox(height: 4),
                 Text(
-                  a,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.remove_red_eye_outlined,
-                      size: 14,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      v,
-                      style: const TextStyle(color: Colors.grey, fontSize: 11),
-                    ),
-                    const SizedBox(width: 12),
-                    const Icon(Icons.list, size: 14, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(
-                      c,
-                      style: const TextStyle(color: Colors.grey, fontSize: 11),
-                    ),
-                  ],
+                  'de $author',
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
                 ),
                 const SizedBox(height: 8),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 4,
-                  children: tags
-                      .map(
-                        (tag) => Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[850],
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            tag,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
+                 Row(
+                  children: [
+                    _statIcon(Icons.remove_red_eye, '1.2M'),
+                    const SizedBox(width: 12),
+                    _statIcon(Icons.star, '89K'),
+                    const SizedBox(width: 12),
+                    _statIcon(Icons.list, '35'),
+                  ],
                 ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _statIcon(IconData icon, String value) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.grey, size: 14),
+        const SizedBox(width: 4),
+        Text(value, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+      ],
     );
   }
 }
